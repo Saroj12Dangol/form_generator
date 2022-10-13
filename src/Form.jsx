@@ -21,7 +21,6 @@ function Form() {
           <input
             ref={reference[index]}
             className={classes.input}
-            key={index + index}
             type={field.type}
             value={field.value}
             required={field.required}
