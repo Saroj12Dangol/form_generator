@@ -7,9 +7,13 @@ const jsonFile = {
           ref: "nameRef",
           name: "name",
           label: "Name",
-          value: "Saroj Dangol",
+          value: "Saroj",
           type: "text",
-          required: true,
+          validator: {
+            required: true,
+            maxLength: 50,
+            minLength: 10,
+          },
           placeholder: "Enter your name",
         },
         {
@@ -18,7 +22,11 @@ const jsonFile = {
           label: "Email",
           value: "saroj9823dangol@gmail.com",
           type: "email",
-          required: true,
+          validator: {
+            required: true,
+            maxLength: 50,
+            minLength: 10,
+          },
           placeholder: "Enter your email",
         },
         {
@@ -27,7 +35,11 @@ const jsonFile = {
           label: "Phone",
           value: 9863485599,
           type: "number",
-          required: false,
+          validator: {
+            required: false,
+            maxLength: 10,
+            minLength: 10,
+          },
           placeholder: "Enter your Phone number",
         },
         {
@@ -36,7 +48,24 @@ const jsonFile = {
           label: "Age",
           value: 23,
           type: "number",
-          required: false,
+          validator: {
+            required: false,
+            maxLength: 2,
+            minLength: 1,
+          },
+          placeholder: "Enter your age",
+        },
+        {
+          ref: "addressRef",
+          name: "address",
+          label: "Address",
+          value: "Lele, Lalitpur",
+          type: "string",
+          validator: {
+            required: true,
+            maxLength: 50,
+            minLength: 3,
+          },
           placeholder: "Enter your age",
         },
       ],
