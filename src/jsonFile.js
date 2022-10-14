@@ -7,7 +7,7 @@ const jsonFile = {
           ref: "nameRef",
           name: "name",
           label: "Name",
-          value: "Saroj",
+          value: "Saroj Dangol",
           type: "text",
           validator: {
             required: true,
@@ -46,7 +46,7 @@ const jsonFile = {
           ref: "ageRef",
           name: "age",
           label: "Age",
-          value: 23,
+          value: 22,
           type: "number",
           validator: {
             required: false,

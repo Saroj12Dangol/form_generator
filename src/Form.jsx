@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import jsonFile from "./jsonFile";
 import classes from "./Form.module.css";
 import { useRef } from "react";
@@ -9,13 +9,14 @@ function Form() {
   const [click, setClick] = useState(false);
 
   function hello(field) {
+    console.log("hello called");
     if (
       field.validator.required &&
-      references.current[field.ref].value === ""
+      field.value === ""
     ) {
       return <p>required</p>;
     } else if (
-      references.current[field.ref].value.length > field.validator.maxLength
+      field.value.toString().length > field.validator.maxLength
     ) {
       return (
         <p>
@@ -24,7 +25,7 @@ function Form() {
         </p>
       );
     } else if (
-      references.current[field.ref].value.length < field.validator.minLength
+      field.value.toString().length < field.validator.minLength
     ) {
       return (
         <p>
@@ -57,11 +58,14 @@ function Form() {
       );
     });
   });
+  console.log("hello", click);
+
+  useEffect(() => {
+    setClick(true);
+  }, []);
 
   function enrollClicked(e) {
     e.preventDefault();
-    setClick(true);
-
     const keys = Object.keys(references.current);
 
     keys.forEach((key) => {
