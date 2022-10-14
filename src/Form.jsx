@@ -6,27 +6,44 @@ import { useRef } from "react";
 function Form() {
   const references = useRef({});
 
-  const [click, setClick] = useState(false);
+  let nameValues = {};
+  const validators = {};
 
-  function hello(field) {
+  jsonFile.section.map((data) => {
+    return data.input.map((field) => {
+      Object.keys(field.validator).forEach((key) => {
+        validators[key] = field.validator[key];
+      });
+      return (nameValues[field.name] = field.value);
+    });
+  });
+
+  const [inputValues, setInputValues] = useState(nameValues);
+  console.log("validators", validators, inputValues);
+
+  function validate(e) {
+    const { name, value } = e.target;
+
+    setInputValues({
+      ...inputValues,
+      [name]: value,
+    });
+  }
+
+  console.log(inputValues);
+
+  function handleError(field) {
     console.log("hello called");
-    if (
-      field.validator.required &&
-      field.value === ""
-    ) {
+    if (field.validator.required && inputValues[field.name] === "") {
       return <p>required</p>;
-    } else if (
-      field.value.toString().length > field.validator.maxLength
-    ) {
+    } else if (inputValues[field.name].length > field.validator.maxLength) {
       return (
         <p>
           Too Long,Input between {field.validator.minLength} to{" "}
           {field.validator.maxLength}{" "}
         </p>
       );
-    } else if (
-      field.value.toString().length < field.validator.minLength
-    ) {
+    } else if (inputValues[field.name].length < field.validator.minLength && inputValues[field.name].length!==0) {
       return (
         <p>
           Too Short, Input between {field.validator.minLength} to{" "}
@@ -36,8 +53,9 @@ function Form() {
     }
   }
 
-  const inputField = jsonFile.section.map((data, index) => {
-    return data.input.map((field) => {
+  const inputField = jsonFile.section.map((data) => {
+    return data.input.map((field, index) => {
+      // console.log(field);
       return (
         <div>
           <label htmlFor={field.name} className={classes.label}>
@@ -47,22 +65,18 @@ function Form() {
             ref={(value) => {
               references.current[field.ref] = value;
             }}
+            name={field.name}
             className={classes.input}
             type={field.type}
-            value={field.value}
+            value={inputValues[field.name]}
             required={true}
-            readOnly
+            onChange={validate}
           />
-          {click ? hello(field) : ""}
+          {handleError(field)}
         </div>
       );
     });
   });
-  console.log("hello", click);
-
-  useEffect(() => {
-    setClick(true);
-  }, []);
 
   function enrollClicked(e) {
     e.preventDefault();
