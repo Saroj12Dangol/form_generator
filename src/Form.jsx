@@ -1,11 +1,8 @@
 import React, { useState } from "react";
 import jsonFile from "./jsonFile";
 import classes from "./Form.module.css";
-import { useRef } from "react";
 
 function Form() {
-  const references = useRef({});
-
   let nameValues = {};
 
   jsonFile.section.map((data) => {
@@ -15,6 +12,7 @@ function Form() {
   });
 
   const [inputValues, setInputValues] = useState(nameValues);
+  let errors = [];
 
   function validate(e) {
     const { name, value } = e.target;
@@ -25,13 +23,12 @@ function Form() {
     });
   }
 
-  console.log(inputValues);
-
   function handleError(field) {
-    console.log("hello called");
     if (field.validator.required && inputValues[field.name] === "") {
+      errors.push("error");
       return <p>required</p>;
     } else if (inputValues[field.name].length > field.validator.maxLength) {
+      errors.push("error");
       return (
         <p>
           Too Long,Input between {field.validator.minLength} to{" "}
@@ -42,6 +39,7 @@ function Form() {
       inputValues[field.name].length < field.validator.minLength &&
       inputValues[field.name].length !== 0
     ) {
+      errors.push("error");
       return (
         <p>
           Too Short, Input between {field.validator.minLength} to{" "}
@@ -52,17 +50,13 @@ function Form() {
   }
 
   const inputField = jsonFile.section.map((data) => {
-    return data.input.map((field, index) => {
-      // console.log(field);
+    return data.input.map((field) => {
       return (
         <div>
           <label htmlFor={field.name} className={classes.label}>
             {field.label}:
           </label>
           <input
-            ref={(value) => {
-              references.current[field.ref] = value;
-            }}
             name={field.name}
             className={classes.input}
             type={field.type}
@@ -78,11 +72,9 @@ function Form() {
 
   function enrollClicked(e) {
     e.preventDefault();
-    const keys = Object.keys(references.current);
-
-    keys.forEach((key) => {
-      console.log(references.current[key].value);
-    });
+    if (errors.length === 0) {
+      console.log(inputValues);
+    }
   }
 
   return (
