@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import jsonFile from "./jsonFile";
 import classes from "./Form.module.css";
 import { useRef } from "react";
@@ -7,19 +7,14 @@ function Form() {
   const references = useRef({});
 
   let nameValues = {};
-  const validators = {};
 
   jsonFile.section.map((data) => {
     return data.input.map((field) => {
-      Object.keys(field.validator).forEach((key) => {
-        validators[key] = field.validator[key];
-      });
       return (nameValues[field.name] = field.value);
     });
   });
 
   const [inputValues, setInputValues] = useState(nameValues);
-  console.log("validators", validators, inputValues);
 
   function validate(e) {
     const { name, value } = e.target;
@@ -43,7 +38,10 @@ function Form() {
           {field.validator.maxLength}{" "}
         </p>
       );
-    } else if (inputValues[field.name].length < field.validator.minLength && inputValues[field.name].length!==0) {
+    } else if (
+      inputValues[field.name].length < field.validator.minLength &&
+      inputValues[field.name].length !== 0
+    ) {
       return (
         <p>
           Too Short, Input between {field.validator.minLength} to{" "}
