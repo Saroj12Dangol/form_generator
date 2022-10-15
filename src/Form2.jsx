@@ -56,7 +56,7 @@ function Form2() {
         setErrors({ ...errors, [currentInput.name]: "short" });
         return;
       } else {
-        setErrors({});
+        setErrors({...errors, [currentInput.name]:undefined});
       }
     }
   }, [inputValues[currentInput.name]]);
