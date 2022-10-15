@@ -5,8 +5,8 @@ import classes from "./Form.module.css";
 function Form2() {
   let nameValues = {};
   let validators = {};
-  const [errors, setErrors] = useState({});
 
+  const [errors, setErrors] = useState({});
   const [forFirst, setForFirst] = useState(false);
   const [currentInput, setCurrentInput] = useState({
     name: "",
@@ -32,7 +32,6 @@ function Form2() {
       [name]: value,
     });
   }
-  console.log(inputValues);
 
   useMemo(() => {
     console.log("hello called");
