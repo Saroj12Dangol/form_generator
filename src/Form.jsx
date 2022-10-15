@@ -1,12 +1,22 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import jsonFile from "./jsonFile";
 import classes from "./Form.module.css";
 
 function Form() {
   let nameValues = {};
+  let validators = {};
+  let Errors = []
+
+  const [forFirst, setForFirst] = useState(false);
+
+  const [currentInput, setCurrentInput] = useState({
+    name: "",
+    value: "",
+  });
 
   jsonFile.section.map((data) => {
     return data.input.map((field) => {
+      validators[field.name] = field.validator;
       return (nameValues[field.name] = field.value);
     });
   });
@@ -16,6 +26,8 @@ function Form() {
 
   function validate(e) {
     const { name, value } = e.target;
+    setForFirst(true);
+    setCurrentInput({ ...currentInput, name: name, value: value });
 
     setInputValues({
       ...inputValues,
@@ -23,31 +35,38 @@ function Form() {
     });
   }
 
-  function handleError(field) {
-    if (field.validator.required && inputValues[field.name] === "") {
-      errors.push("error");
-      return <p>required</p>;
-    } else if (inputValues[field.name].length > field.validator.maxLength) {
-      errors.push("error");
-      return (
-        <p>
-          Too Long,Input between {field.validator.minLength} to{" "}
-          {field.validator.maxLength}{" "}
-        </p>
-      );
-    } else if (
-      inputValues[field.name].length < field.validator.minLength &&
-      inputValues[field.name].length !== 0
-    ) {
-      errors.push("error");
-      return (
-        <p>
-          Too Short, Input between {field.validator.minLength} to{" "}
-          {field.validator.maxLength}{" "}
-        </p>
-      );
+  const checkValidity = () => {
+    console.log("here");
+    if (forFirst) {
+      if (
+        validators[currentInput.name].required &&
+        inputValues[currentInput.name] === ""
+      ) {
+        Errors.push("error")
+        document.getElementById(currentInput.name).innerHTML = "required";
+        return;
+      } else if (
+        inputValues[currentInput.name].length >
+        validators[currentInput.name].maxLength
+      ) {
+        Errors.push("error")
+        document.getElementById(currentInput.name).innerHTML = "long";
+        return;
+      } else if (
+        inputValues[currentInput.name].length <
+          validators[currentInput.name].minLength &&
+        inputValues[currentInput.name].length !== 0
+      ) {
+        Errors.push("error")
+        document.getElementById(currentInput.name).innerHTML = "short";
+        return;
+      } else {
+        document.getElementById(currentInput.name).innerHTML = "";
+      }
     }
-  }
+  };
+  
+  checkValidity();
 
   const inputField = jsonFile.section.map((data) => {
     return data.input.map((field) => {
@@ -64,7 +83,7 @@ function Form() {
             required={true}
             onChange={validate}
           />
-          {handleError(field)}
+          <p id={field.name}></p>
         </div>
       );
     });
@@ -72,7 +91,7 @@ function Form() {
 
   function enrollClicked(e) {
     e.preventDefault();
-    if (errors.length === 0) {
+    if (Errors.length === 0) {
       console.log(inputValues);
     }
   }
