@@ -1,14 +1,11 @@
 import React, { useMemo, useState } from "react";
 import jsonFile from "./jsonFile";
 import classes from "./Form.module.css";
-import { useRef } from "react";
 
 function Form2() {
-  const references = useRef({});
-
   let nameValues = {};
   let validators = {};
-  let errors = [];
+  const [errors, setErrors] = useState({});
 
   const [forFirst, setForFirst] = useState(false);
   const [currentInput, setCurrentInput] = useState({
@@ -37,36 +34,38 @@ function Form2() {
   }
   console.log(inputValues);
 
-  const handleError = useMemo(() => {
+  useMemo(() => {
+    console.log("hello called");
     if (forFirst) {
-      console.log("hello called");
       if (
         validators[currentInput.name].required &&
         inputValues[currentInput.name] === ""
       ) {
-        document.getElementById(currentInput.name).innerHTML = "required";
-        errors.push("error");
+        setErrors({ ...errors, [currentInput.name]: "required" });
         return;
       } else if (
         inputValues[currentInput.name].length >
         validators[currentInput.name].maxLength
       ) {
-        errors.push("error");
-        document.getElementById(currentInput.name).innerHTML = "long";
+        setErrors({ ...errors, [currentInput.name]: "long" });
         return;
       } else if (
         inputValues[currentInput.name].length <
           validators[currentInput.name].minLength &&
         inputValues[currentInput.name].length !== 0
       ) {
-        errors.push("error");
-        document.getElementById(currentInput.name).innerHTML = "short";
+        setErrors({ ...errors, [currentInput.name]: "short" });
         return;
       } else {
-        document.getElementById(currentInput.name).innerHTML = "";
+        setErrors({});
       }
     }
   }, [inputValues[currentInput.name]]);
+  console.log(errors);
+  if (errors[currentInput.name]) {
+    console.log(errors);
+    console.log(errors[currentInput.name]);
+  }
 
   const inputField = jsonFile.section.map((data) => {
     return data.input.map((field) => {
@@ -83,7 +82,7 @@ function Form2() {
             required={true}
             onChange={validate}
           />
-          <p id={field.name}>{handleError}</p>
+          {errors[field.name] && <p>{errors[field.name]}</p>}
         </div>
       );
     });
@@ -91,11 +90,7 @@ function Form2() {
 
   function enrollClicked(e) {
     e.preventDefault();
-    const keys = Object.keys(references.current);
 
-    keys.forEach((key) => {
-      console.log(references.current[key].value);
-    });
     if (errors.length === 0) {
       console.log(inputValues);
     }
