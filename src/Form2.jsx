@@ -1,14 +1,16 @@
 import React, { useMemo, useState } from "react";
 import jsonFile from "./jsonFile";
 import classes from "./Form.module.css";
+import { useRef } from "react";
 
-function Form() {
+function Form2() {
+  const references = useRef({});
+
   let nameValues = {};
   let validators = {};
-  let Errors = []
+  let errors = [];
 
   const [forFirst, setForFirst] = useState(false);
-
   const [currentInput, setCurrentInput] = useState({
     name: "",
     value: "",
@@ -33,22 +35,23 @@ function Form() {
       [name]: value,
     });
   }
+  console.log(inputValues);
 
-  const checkValidity = () => {
-    console.log("here");
+  const handleError = useMemo(() => {
     if (forFirst) {
+      console.log("hello called");
       if (
         validators[currentInput.name].required &&
         inputValues[currentInput.name] === ""
       ) {
-        Errors.push("error")
         document.getElementById(currentInput.name).innerHTML = "required";
+        errors.push("error");
         return;
       } else if (
         inputValues[currentInput.name].length >
         validators[currentInput.name].maxLength
       ) {
-        Errors.push("error")
+        errors.push("error");
         document.getElementById(currentInput.name).innerHTML = "long";
         return;
       } else if (
@@ -56,16 +59,14 @@ function Form() {
           validators[currentInput.name].minLength &&
         inputValues[currentInput.name].length !== 0
       ) {
-        Errors.push("error")
+        errors.push("error");
         document.getElementById(currentInput.name).innerHTML = "short";
         return;
       } else {
         document.getElementById(currentInput.name).innerHTML = "";
       }
     }
-  };
-  
-  checkValidity();
+  }, [inputValues[currentInput.name]]);
 
   const inputField = jsonFile.section.map((data) => {
     return data.input.map((field) => {
@@ -82,7 +83,7 @@ function Form() {
             required={true}
             onChange={validate}
           />
-          <p id={field.name}></p>
+          <p id={field.name}>{handleError}</p>
         </div>
       );
     });
@@ -90,7 +91,12 @@ function Form() {
 
   function enrollClicked(e) {
     e.preventDefault();
-    if (Errors.length === 0) {
+    const keys = Object.keys(references.current);
+
+    keys.forEach((key) => {
+      console.log(references.current[key].value);
+    });
+    if (errors.length === 0) {
       console.log(inputValues);
     }
   }
@@ -113,5 +119,4 @@ function Form() {
     </div>
   );
 }
-
-export default Form;
+export default Form2;
